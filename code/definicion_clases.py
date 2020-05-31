@@ -219,3 +219,54 @@ class truthSemaforo:
         for e in self.evaluaciones:
             print ("\n ", e.id, " ", e.sumTruth, " ", e.repAnt, " ", e.nTimes, " ", e.difTime, " ", e.difVel, " ",  e.truth)
 
+
+
+
+class PostEvaluation:
+
+    def __init__(self, carretera, hora, calidad):
+        self.carretera = carretera
+        self.hora = hora
+        self.calidad = calidad
+
+    def __str__(self):
+        return "{} {} {} {}".format(self.carretera, self.hora, self.calidad)
+
+
+class array_evaluaciones:
+
+    evaluaciones = []
+
+    def cargarDatos(self):
+        listaDeEvaluaciones=open("../store/array_evaluaciones.txt", "ab+")
+        listaDeEvaluaciones.seek(0)
+
+        try:
+            self.evaluaciones = pickle.load(listaDeEvaluaciones)
+        except:
+            print (" ")
+        finally:
+            listaDeEvaluaciones.close()
+
+    def agregarEvaluaciones(self, e):
+        self.evaluaciones.append(e)
+        self.guardarEvaluaciones()
+
+
+    def mostrarEvaluaciones(self):
+        for e in self.evaluaciones:
+            print(e)
+
+    def guardarEvaluaciones(self):
+        listaDeEvaluaciones=open("../store/array_evaluaciones.txt", "wb")
+        pickle.dump(self.evaluaciones, listaDeEvaluaciones)
+        listaDeEvaluaciones.close()
+
+    def mostrarInfo(self):
+        print("Las evaluaciones almacenadas son las siguientes:")
+        for e in self.evaluaciones:
+            print ("\n ", e.carretera, " ", e.hora, " ", e.calidad)
+
+
+
+

@@ -4,6 +4,7 @@ import datetime
 from time import time
 import time
 import random
+import evaluation
 import connection
 import definicion_clases
 
@@ -17,6 +18,10 @@ array_carretera = []
 array_destinos = []
 truthtable = definicion_clases.truthtable()
 truthtable.cargarDatos()
+
+array_evaluaciones = definicion_clases.array_evaluaciones()
+array_evaluaciones.cargarDatos()
+arrayFatiga = []
 
 now = datetime.datetime.now()
 hora = now.hour
@@ -57,6 +62,8 @@ def start():
     global nCoches
     global t1
     global truthtable
+    global array_evaluaciones
+    global arrayFatiga
     n = 0
 
     now = datetime.datetime.now()
@@ -94,6 +101,12 @@ def start():
 
     print ("Carretera anterior: ", carretera_ant)
     print ("Carretera actual: ", carretera)
+
+    if carretera_ant != carretera:
+        print ("Introducir la fatiga muestreada en el instante actual: \n")
+        fatiga = input()
+        evaluation.almacenamientoFatigaInicio(arrayFatiga, carretera, fatiga)
+        evaluation.almacenamientoFatigaFinal(arrayFatiga, carretera_ant, fatiga)
 
     estado = 0
 
@@ -312,6 +325,7 @@ def alerta():
     global array_destinos
     global hora
     global carretera
+    global carretera_ant
     global destino
     global estado
     global message
@@ -342,7 +356,37 @@ def alerta():
     print ("Tiempo de almacenamiento, verdad y alerta = ", time.time() - momento)
     datos.guardarCarreteras()
     truthtable.guardarCarreteras()
+
+    if carretera == destino:
+        estado = 7
+    else:
+        estado = 'i'
+
+def evaluaciones():
+
+    global datos
+    global array_carretera
+    global array_destinos
+    global hora
+    global carretera
+    global carretera_ant
+    global destino
+    global estado
+    global message
+    global addr
+    global data
+    global client_socket
+    global server_socket
+    global truthtable
+    global array_evaluaciones
+    global arrayFatiga
+
+    print (arrayFatiga)
+    evaluation.calculoAlmacenamientoCalidad(arrayFatiga, array_evaluaciones, hora, destino)
+    array_evaluaciones.mostrarInfo()
+
     estado = 'i'
+
 
 
 def FSM():
@@ -357,6 +401,7 @@ def FSM():
          4 :almacenar_array_principal,
          5 :calcular_factor_verdad,
          6 :alerta,
+         7 :evaluaciones,
     }
     func = switch.get(estado, lambda: None)
     return func()
